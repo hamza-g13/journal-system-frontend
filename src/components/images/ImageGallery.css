@@ -1,0 +1,123 @@
+.image-gallery {
+    padding: 1.5rem;
+}
+
+.image-gallery-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.image-gallery-header h3 {
+    margin: 0;
+    color: var(--text-dark);
+}
+
+.upload-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.3s;
+}
+
+.upload-btn:hover {
+    background: var(--primary-hover);
+}
+
+.upload-btn:disabled {
+    background: var(--secondary-color);
+    cursor: not-allowed;
+}
+
+.image-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.image-card {
+    position: relative;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.image-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.image-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.image-card-info {
+    padding: 0.75rem;
+}
+
+.image-card-date {
+    font-size: 0.875rem;
+    color: var(--text-light);
+}
+
+.image-card-actions {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    display: flex;
+    gap: 0.5rem;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.image-card:hover .image-card-actions {
+    opacity: 1;
+}
+
+.image-action-btn {
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+}
+
+.image-action-btn:hover {
+    background: white;
+}
+
+.image-action-btn.delete {
+    color: var(--danger-color);
+}
+
+.no-images {
+    text-align: center;
+    padding: 3rem;
+    color: var(--text-light);
+}
+
+.no-images p {
+    margin-top: 0.5rem;
+}
+
+.upload-input {
+    display: none;
+}

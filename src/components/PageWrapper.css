@@ -1,0 +1,15 @@
+/* src/components/PageWrapper.css */
+
+.page-wrapper {
+    padding: 2rem;
+    min-height: calc(100vh - 60px);
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+@media (max-width: 768px) {
+    .page-wrapper {
+        padding: 1rem;
+    }
+}

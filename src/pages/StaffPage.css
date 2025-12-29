@@ -1,0 +1,125 @@
+/* src/pages/StaffPage.css */
+.staff-page {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.staff-header {
+    margin-bottom: 2rem;
+}
+
+.staff-header h1 {
+    margin-bottom: 0.5rem;
+}
+
+.staff-header p {
+    color: #666;
+}
+
+.practitioner-info {
+    margin-top: 0.5rem;
+    color: #555;
+    font-size: 0.95rem;
+}
+
+.btn-view-info {
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+    background: #3498db;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.3s;
+}
+
+.btn-view-info:hover {
+    background: #2980b9;
+}
+
+/* Layout */
+.staff-layout {
+    display: grid;
+    grid-template-columns: 350px 1fr;
+    gap: 2rem;
+    height: 70vh;
+}
+
+/* Patients Sidebar */
+.patients-sidebar {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.patients-sidebar h3 {
+    padding: 1.5rem;
+    margin: 0;
+    border-bottom: 1px solid #eee;
+    background: #f8f9fa;
+}
+
+/* My Information Section */
+.my-info-section {
+    padding: 1rem;
+}
+
+.my-info-section h2 {
+    margin-bottom: 1.5rem;
+    color: #2c3e50;
+}
+
+.info-card {
+    background: #f8f9fa;
+    padding: 2rem;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+}
+
+.info-card h3 {
+    margin-bottom: 1.5rem;
+    color: #2c3e50;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 0.5rem;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.info-item label {
+    font-weight: 600;
+    color: #666;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+}
+
+.info-item span {
+    color: #2c3e50;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.type-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background: #e8f5e9;
+    color: #2e7d32;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    width: fit-content;
+}
