@@ -47,5 +47,7 @@ jobs:
     steps:
       - name: Deploy to CBH Cloud
         run: |
-          curl -X POST https://deploy.cloud.cbh.kth.se/api/v1/deployments/frontend/triggers \
+          # Lägg till -k för att tillåta self-signed certifikat
+          curl -k -X POST https://deploy.cloud.cbh.kth.se/api/v1/deployments/frontend/triggers \
             -H "Authorization: Bearer ${{ secrets.KTH_CLOUD_API_KEY }}"
+  
