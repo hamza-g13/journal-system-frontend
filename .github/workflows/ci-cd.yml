@@ -32,13 +32,18 @@ jobs:
       - name: Build and push Docker image
         if: github.ref == 'refs/heads/main'
         run: |
-          # Jag ser att du har " [file:6]" i slutet av din kod i frågan.
-          # Se till att det INTE är med i din riktiga fil!
-          docker build -t ghcr.io/${{ github.repository }}:${{ github.sha }} .
-          docker tag ghcr.io/${{ github.repository }}:${{ github.sha }} ghcr.io/${{ github.repository }}:latest
-          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-          docker push ghcr.io/${{ github.repository }}:${{ github.sha }}
-          docker push ghcr.io/${{ github.repository }}:latest
+          # 1. Logga in på DockerHub med dina secrets
+          echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+
+          # 2. Bygg image. OBS: Jag döper den till 'journal-frontend'. 
+          # Om du vill ha ett annat namn på DockerHub, ändra det här.
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/journal-frontend:${{ github.sha }} .
+          docker tag ${{ secrets.DOCKERHUB_USERNAME }}/journal-frontend:${{ github.sha }} ${{ secrets.DOCKERHUB_USERNAME }}/journal-frontend:latest
+
+          # 3. Pusha till DockerHub
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/journal-frontend:${{ github.sha }}
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/journal-frontend:latest
+  
 
   deploy:
     needs: test-build
