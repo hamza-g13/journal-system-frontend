@@ -9,14 +9,6 @@
     "lint": "eslint .",
     "preview": "vite preview"
   },
-
-  "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview",
-    "test": "echo \"No tests specified\" && exit 0"
-  },
   "dependencies": {
     "fabric": "^5.3.0",
     "oidc-client-ts": "^3.0.1",
