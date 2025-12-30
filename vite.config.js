@@ -6,6 +6,7 @@ export default defineConfig({
     plugins: [react()],
     server: {
         proxy: {
+
             '/api': {
                 // VIKTIGT: Byt ut URL:en nedan mot din Patient Service i CBH Cloud
                 // T.ex: https://journal-system-patient-xyz.app.cloud.cbh.kth.se
