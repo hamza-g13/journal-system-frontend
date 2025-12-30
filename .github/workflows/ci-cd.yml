@@ -1,0 +1,48 @@
+name: Frontend CI/CD
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
+      - name: Build and push Docker image
+        if: github.ref == 'refs/heads/main'
+        run: |
+          docker build -t ghcr.io/${{ github.repository }}:${{ github.sha }} .
+          docker tag ghcr.io/${{ github.repository }}:${{ github.sha }} ghcr.io/${{ github.repository }}:latest
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+          docker push ghcr.io/${{ github.repository }}:${{ github.sha }}
+          docker push ghcr.io/${{ github.repository }}:latest [file:6]
+
+  deploy:
+    needs: test-build
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to CBH Cloud
+        run: |
+          curl -X POST https://deploy.cloud.cbh.kth.se/api/v1/deployments/frontend/triggers \
+            -H "Authorization: Bearer ${{ secrets.KTH_CLOUD_API_KEY }}"
+  
+  
