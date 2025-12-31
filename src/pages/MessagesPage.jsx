@@ -44,7 +44,14 @@ function MessagesPage({ token, role }) {
         e.preventDefault();
         setSending(true);
 
-        const result = await sendMessage(newMessage);
+        // Find the selected recipient to get their username
+        const selectedRecipient = recipients.find(r => r.id === newMessage.receiverId);
+        const messagePayload = {
+            ...newMessage,
+            receiverUsername: selectedRecipient?.username || selectedRecipient?.label || 'Unknown'
+        };
+
+        const result = await sendMessage(messagePayload);
 
         if (result.success) {
             setNewMessage({ receiverId: "", subject: "", content: "" });
@@ -136,9 +143,8 @@ function MessagesPage({ token, role }) {
                             currentMessages.map((msg) => (
                                 <div
                                     key={msg.id}
-                                    className={`message-item ${!msg.isRead && activeTab === 'inbox' ? "unread" : ""} ${
-                                        selectedMessage?.id === msg.id ? "selected" : ""
-                                    }`}
+                                    className={`message-item ${!msg.isRead && activeTab === 'inbox' ? "unread" : ""} ${selectedMessage?.id === msg.id ? "selected" : ""
+                                        }`}
                                     onClick={() => handleMessageSelect(msg)}
                                 >
                                     <div className="message-sender">

@@ -1,21 +1,17 @@
 // src/pages/AdminPage.jsx
 import { useState, useEffect } from 'react';
-import { userService } from '../services/userService';
 import { patientService } from '../services/patientService';
 import { practitionerService } from '../services/practitionerService';
 import { organizationService } from '../services/organizationService';
 import AdminTabs from '../components/admin/AdminTabs';
-import UserCreationForm from '../components/admin/UserCreationForm';
 import './AdminPage.css';
 
 function AdminPage({ token }) {
-    const [users, setUsers] = useState([]);
     const [organizations, setOrganizations] = useState([]);
     const [practitioners, setPractitioners] = useState([]);
-    const [activeTab, setActiveTab] = useState('users');
+    const [activeTab, setActiveTab] = useState('organizations');
     const [loading, setLoading] = useState(false);
 
-    const [newUser, setNewUser] = useState({ username: '', password: '', role: 'PATIENT' });
     const [newPatient, setNewPatient] = useState({
         firstName: '', lastName: '', socialSecurityNumber: '',
         dateOfBirth: '', phoneNumber: '', address: '', userId: ''
@@ -30,19 +26,9 @@ function AdminPage({ token }) {
     });
 
     useEffect(() => {
-        if (activeTab === 'users') fetchUsers();
-        else if (activeTab === 'organizations') fetchOrganizations();
+        if (activeTab === 'organizations') fetchOrganizations();
         else if (activeTab === 'practitioners') fetchPractitioners();
     }, [activeTab, token]);
-
-    const fetchUsers = async () => {
-        try {
-            const data = await userService.getAll(token);
-            setUsers(data);
-        } catch (err) {
-            console.error('Error fetching users:', err);
-        }
-    };
 
     const fetchOrganizations = async () => {
         try {
@@ -59,20 +45,6 @@ function AdminPage({ token }) {
             setPractitioners(data);
         } catch (err) {
             console.error('Error fetching practitioners:', err);
-        }
-    };
-
-    const handleCreateUser = async (userData) => {
-        setLoading(true);
-        try {
-            await userService.create(userData, token);
-            setNewUser({ username: '', password: '', role: 'PATIENT' });
-            await fetchUsers();
-            alert('User created successfully!');
-        } catch (err) {
-            alert('Create user failed: ' + err.message);
-        } finally {
-            setLoading(false);
         }
     };
 
@@ -135,110 +107,7 @@ function AdminPage({ token }) {
 
             <AdminTabs activeTab={activeTab} onTabChange={setActiveTab} />
 
-            {activeTab === 'users' && (
-                <div className="tab-content">
-                    <UserCreationForm
-                        onSubmit={handleCreateUser}
-                        loading={loading}
-                        userData={newUser}
-                        onUserDataChange={setNewUser}
-                    />
 
-                    <h2>All Users</h2>
-                    <table className="admin-table">
-                        <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Username</th>
-                            <th>Role</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {users.map((u) => (
-                            <tr key={u.id}>
-                                <td>{u.id}</td>
-                                <td>{u.username}</td>
-                                <td>
-                                        <span className={`role-badge ${u.role.toLowerCase()}`}>
-                                            {u.role}
-                                        </span>
-                                </td>
-                            </tr>
-                        ))}
-                        </tbody>
-                    </table>
-
-                    <h2>Create Patient</h2>
-                    <form onSubmit={handleCreatePatient}>
-                        <div className="form-row">
-                            <div className="form-group">
-                                <label>First Name</label>
-                                <input
-                                    type="text"
-                                    value={newPatient.firstName}
-                                    onChange={(e) => setNewPatient({ ...newPatient, firstName: e.target.value })}
-                                    required
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label>Last Name</label>
-                                <input
-                                    type="text"
-                                    value={newPatient.lastName}
-                                    onChange={(e) => setNewPatient({ ...newPatient, lastName: e.target.value })}
-                                    required
-                                />
-                            </div>
-                        </div>
-                        <div className="form-group">
-                            <label>Social Security Number</label>
-                            <input
-                                type="text"
-                                value={newPatient.socialSecurityNumber}
-                                onChange={(e) => setNewPatient({ ...newPatient, socialSecurityNumber: e.target.value })}
-                                required
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label>Date of Birth</label>
-                            <input
-                                type="date"
-                                value={newPatient.dateOfBirth}
-                                onChange={(e) => setNewPatient({ ...newPatient, dateOfBirth: e.target.value })}
-                                required
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label>Phone Number</label>
-                            <input
-                                type="text"
-                                value={newPatient.phoneNumber}
-                                onChange={(e) => setNewPatient({ ...newPatient, phoneNumber: e.target.value })}
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label>Address</label>
-                            <input
-                                type="text"
-                                value={newPatient.address}
-                                onChange={(e) => setNewPatient({ ...newPatient, address: e.target.value })}
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label>User ID</label>
-                            <input
-                                type="number"
-                                value={newPatient.userId}
-                                onChange={(e) => setNewPatient({ ...newPatient, userId: e.target.value })}
-                                required
-                            />
-                        </div>
-                        <button type="submit" className="btn-primary" disabled={loading}>
-                            {loading ? 'Creating...' : 'Create Patient'}
-                        </button>
-                    </form>
-                </div>
-            )}
 
             {activeTab === 'organizations' && (
                 <div className="tab-content">
@@ -308,24 +177,24 @@ function AdminPage({ token }) {
                     <div className="table-container">
                         <table className="admin-table">
                             <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Name</th>
-                                <th>Type</th>
-                                <th>City</th>
-                                <th>Address</th>
-                            </tr>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Type</th>
+                                    <th>City</th>
+                                    <th>Address</th>
+                                </tr>
                             </thead>
                             <tbody>
-                            {organizations.map((org) => (
-                                <tr key={org.id}>
-                                    <td>{org.id}</td>
-                                    <td>{org.name}</td>
-                                    <td>{org.type}</td>
-                                    <td>{org.city}</td>
-                                    <td>{org.address || 'N/A'}</td>
-                                </tr>
-                            ))}
+                                {organizations.map((org) => (
+                                    <tr key={org.id}>
+                                        <td>{org.id}</td>
+                                        <td>{org.name}</td>
+                                        <td>{org.type}</td>
+                                        <td>{org.city}</td>
+                                        <td>{org.address || 'N/A'}</td>
+                                    </tr>
+                                ))}
                             </tbody>
                         </table>
                     </div>
@@ -407,26 +276,26 @@ function AdminPage({ token }) {
                     <h2>All Practitioners</h2>
                     <table className="admin-table">
                         <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Name</th>
-                            <th>Type</th>
-                            <th>License</th>
-                            <th>Organization</th>
-                        </tr>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Type</th>
+                                <th>License</th>
+                                <th>Organization</th>
+                            </tr>
                         </thead>
                         <tbody>
-                        {practitioners.map((p) => (
-                            <tr key={p.id}>
-                                <td>{p.id}</td>
-                                <td>{p.firstName} {p.lastName}</td>
-                                <td>
-                                    <span className="type-badge">{p.type}</span>
-                                </td>
-                                <td>{p.licenseNumber}</td>
-                                <td>{p.organizationName || 'N/A'}</td>
-                            </tr>
-                        ))}
+                            {practitioners.map((p) => (
+                                <tr key={p.id}>
+                                    <td>{p.id}</td>
+                                    <td>{p.firstName} {p.lastName}</td>
+                                    <td>
+                                        <span className="type-badge">{p.type}</span>
+                                    </td>
+                                    <td>{p.licenseNumber}</td>
+                                    <td>{p.organizationName || 'N/A'}</td>
+                                </tr>
+                            ))}
                         </tbody>
                     </table>
                 </div>

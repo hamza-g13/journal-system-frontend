@@ -21,6 +21,7 @@ export const useMessageRecipients = (token, role) => {
                         .filter((p) => p.user?.id)
                         .map((p) => ({
                             id: p.user.id,
+                            username: p.user.username || `${p.firstName}_${p.lastName}`,  // Added username
                             label: `${p.firstName} ${p.lastName} (${p.type})`,
                         }))
                 );
@@ -31,6 +32,7 @@ export const useMessageRecipients = (token, role) => {
                         .filter((p) => p.user?.id)
                         .map((p) => ({
                             id: p.user.id,
+                            username: p.user.username || `${p.firstName}_${p.lastName}`,  // Added username
                             label: `${p.firstName} ${p.lastName} (patient)`,
                         }))
                 );
