@@ -1,18 +1,14 @@
 name: Frontend CI/CD
+
 on:
   push:
-    branches: [ main ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ main ]
-
-# --- DETTA ÄR VAD DU SAKNAR ---
-permissions:
-  packages: write
-  contents: read
-# ------------------------------
+    branches: [ "main" ]
 
 jobs:
-  test-build:
+  build-and-deploy:
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -29,30 +25,24 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Build and push Docker image
-        if: github.ref == 'refs/heads/main'
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/journal-frontend:${{ github.sha }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/journal-frontend:latest
+
+      - name: Trigger Redeploy in KTH Cloud
         run: |
-          # 1. Logga in på DockerHub med dina secrets
-          echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
-
-          # 2. Bygg image. OBS: Jag döper den till 'journal-frontend'. 
-          # Om du vill ha ett annat namn på DockerHub, ändra det här.
-          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/journal-frontend:${{ github.sha }} .
-          docker tag ${{ secrets.DOCKERHUB_USERNAME }}/journal-frontend:${{ github.sha }} ${{ secrets.DOCKERHUB_USERNAME }}/journal-frontend:latest
-
-          # 3. Pusha till DockerHub
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/journal-frontend:${{ github.sha }}
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/journal-frontend:latest
-  
-
-  deploy:
-    needs: test-build
-    if: github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Deploy to CBH Cloud
-        run: |
-          # Lägg till -k för att tillåta self-signed certifikat
-          curl -k -X POST https://deploy.cloud.cbh.kth.se/api/v1/deployments/frontend/triggers \
-            -H "Authorization: Bearer ${{ secrets.KTH_CLOUD_API_KEY }}"
-  
+          curl -X POST "https://api.cloud.cbh.kth.se/deploy/v2/deployments/55ac3832-517f-4445-951d-5179a5e27498/command" \
+            -H "X-Api-Key: ${{ secrets.KTH_CLOUD_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d '{"command": "restart"}'
